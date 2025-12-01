@@ -73,7 +73,7 @@ BLUE_UPPER_BOUND = np.array([120, 255, 255])
 drum_zones = {}
 
 # Zone dimensions
-ZONE_HEIGHT = 120  # Height of each drum pad
+ZONE_HEIGHT = 100  # Height of each drum pad
 bottom_row_drums = ["Kick", "Snare", "Hi-Hat", "Tom1", "Tom2"]
 number_of_drums = len(bottom_row_drums)
 zone_width = WINDOW_WIDTH // number_of_drums
@@ -146,8 +146,8 @@ drum_image_paths = {
     "Kick": "assets/images/kick_drum.png",
     "Snare": "assets/images/snare_drum.png",
     "Hi-Hat": "assets/images/hi_hat.png",
-    "Tom1": "assets/images/tom1.png",
-    "Tom2": "assets/images/tom2.png",
+    "Tom1": "assets/images/tom.png",
+    "Tom2": "assets/images/tom.png",
     "Crash": "assets/images/crash_cymbal.png",
 }
 
@@ -299,8 +299,10 @@ def render_drum_kit_interface(frame):
         center_y = y1 + (y2-y1)//2
         
         # Text color changes based on hit state for better visibility
-        text_color = (0, 0, 0) if is_currently_hit else (255, 255, 255)
-        cv2.putText(frame, drum_name, (center_x - text_width//2, center_y + 10), 
+
+        text_color = (0, 0, 0) if is_currently_hit else (0, 0, 255)
+        text_position =  center_y - 30 if (drum_name != "Crash") else ( center_y + 30)
+        cv2.putText(frame, drum_name, (center_x - text_width//2, text_position), 
                     cv2.FONT_HERSHEY_SIMPLEX, 1, text_color, 2)
 
     # Instructions
