@@ -41,9 +41,9 @@ pygame.mixer.init()
 drum_sounds = {
     "Kick": pygame.mixer.Sound("assets/Samples/kick-808.wav"),
     "Snare": pygame.mixer.Sound("assets/Samples/snare-808.wav"),
-    "Hi-Hat": pygame.mixer.Sound("assets/Samples/hihat-808.wav"),
-    "Tom1": pygame.mixer.Sound("assets/Samples/tom-lofi.wav"),
-    "Tom2": pygame.mixer.Sound("assets/Samples/tom-rototom.wav"),
+    "Hi-Hat": pygame.mixer.Sound("assets/Samples/openhat-808.wav"),
+    "Tom1": pygame.mixer.Sound("assets/Samples/tom-acoustic01.wav"),
+    "Tom2": pygame.mixer.Sound("assets/Samples/tom-acoustic02.wav"),
     "Crash": pygame.mixer.Sound("assets/Samples/crash-808.wav"),
 }
 
@@ -62,40 +62,80 @@ webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, WINDOW_HEIGHT)
 
 # HSV color range for blue object detection
 # These values create a strict blue range to minimize false positives
-BLUE_LOWER_BOUND = np.array([100, 150, 100])
-BLUE_UPPER_BOUND = np.array([120, 255, 255])
+BLUE_LOWER_BOUND = np.array([90, 50, 20])
+BLUE_UPPER_BOUND = np.array([140, 255, 255])
 
 # ==============================================================================
 # DRUM ZONE DEFINITIONS
 # ==============================================================================
+# ==============================================================================
+# DRUM ZONE DEFINITIONS (CUSTOM LAYOUT)
+# ==============================================================================
 
-# Dictionary to store all drum pad zones and their properties
 drum_zones = {}
 
-# Zone dimensions
-ZONE_HEIGHT = 100  # Height of each drum pad
-bottom_row_drums = ["Kick", "Snare", "Hi-Hat", "Tom1", "Tom2"]
-number_of_drums = len(bottom_row_drums)
-zone_width = WINDOW_WIDTH // number_of_drums
+ZONE_HEIGHT = 120
+TOP_ZONE_HEIGHT = 120
+BOTTOM_ZONE_HEIGHT = 140
 
-# Create the five drum pads along the bottom of the screen
-for index, drum_name in enumerate(bottom_row_drums):
-    x_position = index * zone_width
-    y_position = WINDOW_HEIGHT - ZONE_HEIGHT
-    
-    drum_zones[drum_name] = {
-        'box': (x_position, y_position, x_position + zone_width, WINDOW_HEIGHT),
-        'strike_y': None,  # Reserved for future downward motion detection
-        'is_crash': False
-    }
+# ========= TOP ROW =========
+# Hi-Hat (top-right)
+hihat_width = WINDOW_WIDTH // 4
+drum_zones["Hi-Hat"] = {
+    'box': (WINDOW_WIDTH - hihat_width, 0, WINDOW_WIDTH, TOP_ZONE_HEIGHT),
+    'strike_y': None,
+    'is_crash': False
+}
 
-# Create the crash cymbal in the top-left corner
-crash_cymbal_width = WINDOW_WIDTH // 4
+# Kick (top-center)
+kick_width = WINDOW_WIDTH // 4
+kick_x1 = (WINDOW_WIDTH // 2) - (kick_width // 2)
+kick_x2 = kick_x1 + kick_width
+
+drum_zones["Kick"] = {
+    'box': (kick_x1, 0, kick_x2, TOP_ZONE_HEIGHT),
+    'strike_y': None,
+    'is_crash': False
+}
+
+# ========= BOTTOM ROW =========
+# Snare (bottom center)
+snare_width = WINDOW_WIDTH // 5
+snare_x1 = (WINDOW_WIDTH // 2) - (snare_width // 2)
+snare_x2 = snare_x1 + snare_width
+snare_y1 = WINDOW_HEIGHT - BOTTOM_ZONE_HEIGHT
+
+drum_zones["Snare"] = {
+    'box': (snare_x1, snare_y1, snare_x2, WINDOW_HEIGHT),
+    'strike_y': None,
+    'is_crash': False
+}
+
+# Tom1 (bottom-left of snare)
+tom_width = WINDOW_WIDTH // 5
+tom_y1 = snare_y1
+
+drum_zones["Tom1"] = {
+    'box': (snare_x1 - tom_width, tom_y1, snare_x1, WINDOW_HEIGHT),
+    'strike_y': None,
+    'is_crash': False
+}
+
+# Tom2 (bottom-right of snare)
+drum_zones["Tom2"] = {
+    'box': (snare_x2, tom_y1, snare_x2 + tom_width, WINDOW_HEIGHT),
+    'strike_y': None,
+    'is_crash': False
+}
+
+# Optional: Crash cymbal top-left (keep as is)
+crash_width = WINDOW_WIDTH // 4
 drum_zones["Crash"] = {
-    'box': (0, 0, crash_cymbal_width, ZONE_HEIGHT),
+    'box': (0, 0, crash_width, TOP_ZONE_HEIGHT),
     'strike_y': None,
     'is_crash': True
 }
+
 
 # ==============================================================================
 # IMAGE LOADING SYSTEM
