@@ -309,8 +309,8 @@ def render_credits_screen(frame):
         "",
         "Developed by Arian Khademolghorani",
         "Computer Vision: OpenCV",
-        "Sound Engine: Pygame Mixer",
         "Sound Samples: 99Sounds",
+        "Art Drawings: Ceylin Ipek Ak",
         "Tracking Method: HSV Color Filtering",
         "",
         "Press 'B' to go back to the menu."
